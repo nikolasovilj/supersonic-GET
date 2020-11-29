@@ -1,6 +1,6 @@
 # supersonic-GET
 
-![Demo](supersonic-get.mkv)
+![Demo](supersonic-get.gif)
 
 Run:
 ```
