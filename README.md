@@ -1,8 +1,5 @@
 # supersonic-GET
 
-![Demo](supersonic-get.gif)
+Python program that uses multiprocessing and asyncio to collect data from URLs and write it to CSV file
 
-Run:
-```
-python supersonic-get.py
-```
+![Demo](supersonic-get.gif)
