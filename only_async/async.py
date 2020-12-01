@@ -3,9 +3,9 @@ import aiohttp
 import time
 import pandas as pd
 
-df = pd.read_csv('dataset/url-cleaned.csv')
+df = pd.read_csv('../dataset/url-cleaned.csv')
 
-urls = df['url'].to_list()
+urls = df['url'].to_list()[:10000]
 
 c = 0
 results = []
