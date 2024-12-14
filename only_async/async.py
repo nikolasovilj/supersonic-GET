@@ -44,9 +44,7 @@ async def download_all_sites(sites):
         	task = asyncio.ensure_future(fetch_page(session, url))
         	tasks.append(task)
         global results
-        results = await asyncio.gather(*tasks, return_exceptions=False)
-
-#asyncio.get_event_loop().run_until_complete(download_all_sites(urls))
+        results = await asyncio.gather(*tasks, return_exceptions=True)
 
 df_responses = pd.DataFrame()
 
@@ -60,10 +58,10 @@ while urls:
     urls_tw = urls[0:1000]
     del urls[0:1000]
     
-    asyncio.get_event_loop().run_until_complete(download_all_sites(urls_tw))
+    asyncio.run(download_all_sites(urls_tw))
     print(type(results))
     print(len(results))
-    results2 = list(filter(lambda x: x != None, results)) 
+    results2 = list(filter(lambda x: x != None and not isinstance(x, Exception), results)) 
     print(len(results2))
     #time.sleep(3)
     tmp_df = pd.DataFrame(results2)
