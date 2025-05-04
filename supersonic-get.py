@@ -1,8 +1,11 @@
 import asyncio
 import aiohttp
 from multiprocessing import Process, current_process, Queue, cpu_count
+import threading
 import time
 import pandas as pd
+import os
+import signal
 import sys
 import traceback
 
@@ -114,7 +117,28 @@ class Writer(Process):
                     print(tmp_df)
                     tmp_df.to_csv("url-html.csv", mode='a', index=False, header=False)
 
+cleanup_lock = threading.Lock()
+cleanup_called = False
+
+def cleanup(sig, frame):
+    global cleanup_called
+    with cleanup_lock:
+        if cleanup_called:
+            return
+        cleanup_called = True
+    try:
+        os.killpg(0, signal.SIGTERM)
+    except Exception:
+        pass
+    finally:
+        os._exit(0)
+
 if __name__ == "__main__":
+    
+    os.setpgrp()
+
+    signal.signal(signal.SIGINT, cleanup)
+    signal.signal(signal.SIGTERM, cleanup)
 
     wq = Queue()
     q = Queue()
@@ -136,10 +160,13 @@ if __name__ == "__main__":
     for x in downloaders:
         x.start()
     
-    for x in downloaders:
-        x.join()
+    try:
+        for x in downloaders:
+            x.join()
+        w.join()
+    except KeyboardInterrupt:
+        cleanup(None, None)
 
-    w.join()
     wq.close()
     wq.join_thread()
     q.close()
