@@ -131,7 +131,16 @@ def cleanup(sig, frame):
     except Exception:
         pass
     finally:
-        os._exit(0)
+        try:
+            wq.close()
+            wq.join_thread()
+            q.close()
+            q.join_thread()
+        except:
+            print("failing to clean memory")
+            pass
+        print("Exiting...")
+        sys.exit(0)
 
 if __name__ == "__main__":
     
